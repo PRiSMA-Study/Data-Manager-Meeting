@@ -4,6 +4,7 @@
 Codes and instructions will be uploaded before every data manager meeting. Please keep following up this repo to get the latest update.
 
 ### Updates
+05/23 - added ultrasound measurements 
 
 #### :pushpin: updated on 05/06 (Please complete before next meeting 05/10)
 
