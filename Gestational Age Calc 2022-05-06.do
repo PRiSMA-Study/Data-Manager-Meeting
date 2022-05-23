@@ -1,7 +1,7 @@
 *********************************************************
 *Calculating Gestational Age
 *PRiSMA 
-*Last Updated: 05/06/2022
+*Last Updated: 05/23/2022 by ALB
 *********************************************************
 
 *Working Directory - should be updated by user
@@ -16,10 +16,13 @@ include "ReMAPP-Data-Cleaning-Form-Merge-2022-03-28.do"
 
 *destring variables
 foreach x of varlist M06_US_GA_WEEKS_AGE1 M06_US_GA_DAYS_AGE1 M01_GEST_AGE_WKS_SCORRES ///
-					 M01_GEST_AGE_MOS_SCORRES {
-			replace `x' = "" if(`x' =="SKIPPED" | `x' == "UNDEFINED")
+					 M01_GEST_AGE_MOS_SCORRES M06_CRL_MEAN_FAORRES1 M06_BPD_FAORRES1 ///
+					 M06_FL_FAORRES1 M06_HC_FAORRES1 {
+			replace `x' = "" if(`x' =="SKIPPED" | `x' == "UNDEFINED" | `x' == "NaN")
 			destring `x', replace 
 		}
+		
+		*gen byte flag_notnumeric = real(M06_CRL_MEAN_FAORRES1)==.
 
 *converting dates to date format
 foreach x of varlist M01_LMP_SCDAT M01_SCRN_OBSSTDAT M01_EDD_SCDAT M11_INF_1_DSSTDAT {
@@ -131,12 +134,81 @@ hist GA_LABOR
 		 replace GA_LABOR_OUTLIER=1 if (GA_LABOR <=0 | GA_LABOR > 42) 
 		 
 	*Histogram of gestation age at birth with outliers removed
-		 hist GA_LABOR if GA_OUTLIER!=1
+		 hist GA_LABOR if GA_LABOR_OUTLIER!=1
 		 
 
 gen gestage_enroll=(M01_SCRN_OBSSTDAT - (BESTEDD - 280))/7
 hist gestage_enroll
 
+**************************************************************************
+*Step 7: Ultrasound measurements
+*Gestage at ultrasound
+gen GA_ultra1 = (M06_visit_date1 - (BESTEDD - 280))/7
+   
+   sum GA_ultra1
 
+**Crown-Rump Length (mm)
+gen M06_CRL_MEAN_CM_FAORRES1=M06_CRL_MEAN_FAORRES1/10 // converting to CM
+
+	*summary statistics
+	sum(M06_CRL_MEAN_CM_FAORRES1) if (GA_ultra1>8 & GA_ultra1<14)
+	histogram(M06_CRL_MEAN_CM_FAORRES1) if (GA_ultra1>8 & GA_ultra1<14)
+
+
+	*Idenitfying outliers - based on intergrowth standards. Outliers are observations <1 or >9.5 cm for Gestational age >8 & <14 weeks
+	gen CRL_out=.
+		replace CRL_out=1 if (GA_ultra1>8 & GA_ultra1<14 & M06_CRL_MEAN_CM_FAORRES1!=. & (M06_CRL_MEAN_CM_FAORRES1<=1 | M06_CRL_MEAN_CM_FAORRES1>9.5))
+		replace CRL_out=0 if (GA_ultra1>8 & GA_ultra1<14 & (M06_CRL_MEAN_CM_FAORRES1>1 & M06_CRL_MEAN_CM_FAORRES1<=9.5))
+		
+	tab CRL_out if (GA_ultra1>8 & GA_ultra1<14)
+		
+	tab CRL_out if (GA_ultra1>8 & GA_ultra1<14), miss 
+
+
+**Biparietal diameter
+
+	*summary statistics
+	sum(M06_BPD_FAORRES1) if (GA_ultra1>14 & GA_ultra1<41)
+	histogram(M06_BPD_FAORRES1) if (GA_ultra1>14 & GA_ultra1<41)
+
+	*Idenitfying outliers - based on intergrowth standards. Outliers are observations <2.44 or >10.67 cm for Gestational age >14 & <41 weeks
+	gen BPD_out=.
+		replace BPD_out=1 if (GA_ultra1>14 & GA_ultra1<41 & M06_BPD_FAORRES1!=. & (M06_BPD_FAORRES1<2.44 | M06_BPD_FAORRES1>10.67))
+		replace BPD_out=0 if (GA_ultra1>14 & GA_ultra1<41 & (M06_BPD_FAORRES1>2.44 & M06_BPD_FAORRES1<=10.67))
+
+	tab BPD_out if (GA_ultra1>14 & GA_ultra1<41), 
+		
+	tab BPD_out if (GA_ultra1>14 & GA_ultra1<41), miss 
+
+**Femur Length
+
+	*summary statistics
+	sum(M06_FL_FAORRES1) if (GA_ultra1>14 & GA_ultra1<41)
+	histogram(M06_FL_FAORRES1) if (GA_ultra1>14 & GA_ultra1<41)
+	
+	*Idenitfying outliers - based on intergrowth standards. Outliers are observations <0.86 or >8.18 cm for Gestational age >14 & <41 weeks
+	gen FL_out=.
+		replace FL_out=1 if (GA_ultra1>14 & GA_ultra1<41 & M06_FL_FAORRES1!=. & (M06_FL_FAORRES1<.86 | M06_FL_FAORRES1>8.18))
+		replace FL_out=0 if (GA_ultra1>14 & GA_ultra1<41 & (M06_FL_FAORRES1>0.86 & M06_FL_FAORRES1<=8.18))
+
+	tab FL_out if (GA_ultra1>14 & GA_ultra1<41),
+		
+	tab FL_out if (GA_ultra1>14 & GA_ultra1<41), miss 
+
+
+**Head Circumference 
+
+	*summary statistics
+	sum(M06_HC_FAORRES1) if (GA_ultra1>14 & GA_ultra1<41)
+	histogram(M06_HC_FAORRES1) if (GA_ultra1>14 & GA_ultra1<41)
+	
+	*Idenitfying outliers - based on intergrowth standards. Outliers are observations <8.1 or >37.3 cm for Gestational age >14 & <41 weeks
+	gen HC_out=.
+		replace HC_out=1 if (GA_ultra1>14 & GA_ultra1<41 & M06_HC_FAORRES1!=. & (M06_HC_FAORRES1<8.1 | M06_FL_FAORRES1>37.3))
+		replace HC_out=0 if (GA_ultra1>14 & GA_ultra1<41 & (M06_HC_FAORRES1>8.1 & M06_HC_FAORRES1<=37.3))
+
+	tab HC_out if (GA_ultra1>14 & GA_ultra1<41), row
+		
+	tab HC_out if (GA_ultra1>14 & GA_ultra1<41), row miss 
   
 
