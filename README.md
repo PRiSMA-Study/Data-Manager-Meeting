@@ -4,7 +4,7 @@
 Codes and instructions will be uploaded before every data manager meeting. Please keep following up this repo to get the latest update.
 
 ### Updates
-05/23 - added ultrasound measurements 
+
 
 #### :pushpin: updated on 05/06 (Please complete before next meeting 05/10)
 
@@ -19,3 +19,5 @@ Codes and instructions will be uploaded before every data manager meeting. Pleas
    Save the three histograms outputs to share during the data managers meeting.
    
    Upload modified code to your site's github folder. 
+
+#### :pushpin: Updated on 05/23 with ultrasound measurements and outliers
