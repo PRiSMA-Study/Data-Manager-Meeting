@@ -10,9 +10,9 @@ Codes and instructions will be uploaded before every data manager meeting. Pleas
 
 1. Codes:
 
-   `ReMAPP-Data-Cleaning-Form-Merge-2022-03-28.do` --> merges data across MNH forms
+   `ReMAPP-Data-Cleaning-Form-Merge.do` --> merges data across MNH forms
    
-   `Gestational Age Calc 2022-05-06.do` --> creates gestational age variables and histograms
+   `Gestational Age Calc.do` --> creates gestational age variables and histograms
    
 2. To-do:
 
@@ -21,3 +21,9 @@ Codes and instructions will be uploaded before every data manager meeting. Pleas
    Upload modified code to your site's github folder. 
 
 #### :pushpin: Updated on 05/23 with ultrasound measurements and outliers
+    `Gestational Age Calc.do` --> creates gestational age variables, histograms of GA and ultrasound measurements, identifies outliers
+    
+#### :pushpin: Updated on 05/27 - Eligibility criteria for ReMAPP Healthy Cohort
+
+  `ReMAPP-Healthy-Cohort.do` -- > creates variables to identify individuals who meet the ReMAPP healthy cohort criteria 
+
