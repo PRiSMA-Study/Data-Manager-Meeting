@@ -359,7 +359,7 @@ include "ReMAPP-Data-Cleaning-Form-Merge.do"
 			}
 		
 	    gen any_neodeath=0
-		replace any_neodeath=1 if (M03b_LB_DEATH_CAT_AGE==1 | M03b_LB2_DEATH_CAT_AGE == 1 | M03b_LB_DEATH_CAT_AGE == 1)
+		replace any_neodeath=1 if (M03b_LB_DEATH_CAT_AGE==1 | M03b_LB2_DEATH_CAT_AGE == 1 | M03b_LB3_DEATH_CAT_AGE == 1)
 		
 		gen any_stillbirth=0
 		replace any_stillbirth=1 if (M03b_PH_BS_RPORRES==2 | M03b_PH2_BS_RPORRES == 2 | M03b_PH3_BS_RPORRES == 2)
